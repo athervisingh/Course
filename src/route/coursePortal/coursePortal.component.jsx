@@ -3,6 +3,7 @@ import { Card } from '../../components/card/card.component';
 import { Input } from '../../components/input/input.component'
 import { Search } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 
 // SearchBar Component
@@ -32,11 +33,17 @@ const SearchBar = ({ onSearch }) => {
 // CourseCard Component
 const CourseCard = ({ course, onSelect }) => {
   const [imageError, setImageError] = useState(false);
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    const formattedTitle = course.title.replace(/\s+/g, '-').toLowerCase(); // Format title for the URL
+    navigate(`/course/${formattedTitle}`);
+  };
 
   return (
     <Card 
       className="cursor-pointer hover:shadow-lg transition-shadow duration-300 overflow-hidden"
-      onClick={() => onSelect(course)}
+      onClick={handleCardClick} 
     >
       <div className="flex bg-white rounded-lg overflow-hidden">
         <div className="w-1/2 p-6 flex flex-col justify-center">
@@ -100,6 +107,7 @@ const CoursePortal = () => {
     fetchCourses();
   }, []);
 
+ 
   const handleSearch = (searchTerm) => {
     const filtered = courses.filter(course => 
       course.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
