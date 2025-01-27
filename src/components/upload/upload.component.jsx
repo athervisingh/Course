@@ -62,44 +62,47 @@ const Upload = () => {
       };
     
       const handleUpload = async () => {
-        if (selectedFile && pdfName.trim() !== '' && topics.length > 0) {
+        console.log("name",pdfName)
+        console.log('topic',topics)
+        if (selectedFile && pdfName !== '' && topics.length > 0) {
+          console.log("sdsad")
           const formData = new FormData();
           const fileInput = document.querySelector('input[type="file"]');
+          formData.append('name', pdfName.trim()); // Add the custom PDF name
+          console.log(formData)
           formData.append('file', fileInput.files[0]); // Add the file to the form data
-          formData.append('pdfName', pdfName.trim()); // Add the custom PDF name
+          console.log(formData)
           formData.append('topics', JSON.stringify(topics)); // Add the topics as a JSON string
-    console.log(formData);
-          // try {
-          //   const response = await fetch('http://your-backend-url/upload', {
-          //     method: 'POST',
-          //     body: formData,
-          //   });
+          console.log(formData)
+          for (let pair of formData.entries()) {
+            console.log(pair[0] + ':', pair[1]);
+          }
+          try {
+            const response = await fetch('http://127.0.0.1:5002/insert/notes', {
+              method: 'POST',
+              body: formData,
+            });
     
-          //   if (response.ok) {
-          //     const data = await response.json();
-          //     console.log('Upload successful:', data);
+            if (response.ok) {
+              const data = await response.json();
+              console.log('Upload successful:', data);
     
-          //     const newFile = { fileName: pdfName.trim(), topics };
-          //     setUploadedFiles((prevFiles) => [...prevFiles, newFile]);
-          //     setSelectedFile(null);
-          //     setPdfName('');
-          //     setTopics([]);
-          //     alert('Upload successful!');
-          //   } else {
-          //     console.error('Failed to upload:', response.statusText);
-          //     alert('Failed to upload. Please try again.');
-          //   }
-          // } catch (error) {
-          //   console.error('Error uploading:', error);
-          //   alert('An error occurred while uploading. Please try again.');
-          // }
-          const newFile = { fileName: pdfName.trim(), topics };
+              const newFile = { fileName: pdfName.trim(), topics };
               setUploadedFiles((prevFiles) => [...prevFiles, newFile]);
               setSelectedFile(null);
               setPdfName('');
               setTopics([]);
+              const fileInput = document.querySelector('input[type="file"]');
+              if (fileInput) fileInput.value = '';
               alert('Upload successful!');
-         
+            } else {
+              console.error('Failed to upload:', response.statusText);
+              alert('Failed to upload. Please try again.');
+            }
+          } catch (error) {
+            console.error('Error uploading:', error);
+            alert('An error occurred while uploading. Please try again.');
+          } 
         } else {
           alert('Please fill in all fields before uploading.');
         }
